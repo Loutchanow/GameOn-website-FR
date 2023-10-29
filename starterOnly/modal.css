@@ -226,8 +226,8 @@ input {
 .formData[data-error-visible="true"] .text-control {
   border: 2px solid #e54858;
 }
-/* 
-input[data-error]::after {
+
+/* input[data-error]::after {
     content: attr(data-error);
     font-size: 0.4em;
     color: red;
@@ -526,4 +526,24 @@ footer {
     opacity: 1;
   }
 }
+/* *********************MODAL CONFIRMATION ******************************** */
+.modal-body-confirm{
+  background-color: #c4c4c4;
+}
+/* .content{
+  height: 200px;
+} */
 
+/* *****apparition du message d'erreur******************** */
+.message-error{
+  display: none;
+}
+.reveal{
+  color: red;
+  font-size: 0.8rem;
+  display: block;
+}
+/* *****************apparaition de la bordure d'erreur********** */
+.wrong{
+border: 2px solid red;
+}
