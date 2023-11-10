@@ -528,11 +528,19 @@ footer {
 }
 /* *********************MODAL CONFIRMATION ******************************** */
 .modal-body-confirm{
-  background-color: #c4c4c4;
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(26, 39, 156, 0.4);
+  .content{
+    padding: 15px;
+    margin-top: 50vw;
+  }
 }
-/* .content{
-  height: 200px;
-} */
 
 /* *****apparition du message d'erreur******************** */
 .message-error{
@@ -542,8 +550,12 @@ footer {
   color: red;
   font-size: 0.8rem;
   display: block;
+  padding-bottom: 5px;
 }
 /* *****************apparaition de la bordure d'erreur********** */
 .wrong{
 border: 2px solid red;
+}
+.no{
+  border: none;
 }

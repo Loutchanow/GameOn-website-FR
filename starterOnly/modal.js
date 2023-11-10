@@ -13,45 +13,50 @@ const closeElements = document.querySelectorAll(".close");
 const formData = document.querySelectorAll(".formData");
 const modalform = document.querySelectorAll(".bground");
 const btnVerif = document.getElementById("btn-verif");
-const test = document.getElementById("dd");
+const confirmation = document.getElementById("confirmation")
 
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
-/**
- * @returns ouvre les modales
- */
+
 function launchModal() {
   modalform.forEach((modalbg) => {
     modalbg.style.display = "block";
   });
 }
 
-// close modal form
+// close modal *******************************
 closeElements.forEach((element) => element.addEventListener("click", closeModal)); 
 closeBtn.addEventListener("click", closeModal); 
-/**
- * @returns ferme les modales
- */
+
 function closeModal() {
   modalBgElements.forEach((modalbg) => {
     modalbg.style.display = "none";
   });
 }
-/**
- * @returns empeche de clciker et lance la verif
- */
+// ***********************************verif function ************
+
+
 function verif(event) {
-  event.preventDefault();  
-  changeColor("green");
+  if (errors.length === 0) {
+    closeModal();
+    event.preventDefault();
+    confirmation.style.display = "block";
+  } else {
+    event.preventDefault();
+    errors.forEach((errorId) => {
+      const errorElement = document.getElementById(errorId);
+      const errmessage = document.getElementById("messageErr"+ errorId);
+      if (errorElement) {
+        errorElement.classList.add("wrong");
+        errmessage.classList.add("reveal");
+    }});
+  }
 }
-/**
- * @returns verifi et autorise a cliker
- */
-function changeColor(color) {
-  test.style.color = color; 
-}
+
 btnVerif.addEventListener("click", verif);
 
 
+// ***********************getsion d'erreur ************************
+let errors = ["first", "last", "email", "birthDate", "quantity", "options", "conditions" ];
 function manageError(messageErrId, wrongElementId, booleen) {
   const messageErr = document.getElementById(messageErrId);
   const wrongElement = document.getElementById(wrongElementId);
@@ -59,15 +64,19 @@ function manageError(messageErrId, wrongElementId, booleen) {
   if (booleen) {
     messageErr.classList.add("reveal");
     wrongElement.classList.add("wrong");
+    errors.push(wrongElementId);
   } else {
     messageErr.classList.remove("reveal");
     wrongElement.classList.remove("wrong");
+    errors = errors.filter(id => id !== wrongElementId);
   }
 }
+
+// ****************************verif nom et prenom ****************
 const inputLastName = document.getElementById("last");
 const inputFirstName = document.getElementById("first");
 function checkString(valeur, scope){
-  return valeur.length >= 1 && valeur.length < 2
+  return valeur.length >= 0 && valeur.length < 2
   ? manageError("messageErr"+scope, scope, true) : manageError("messageErr"+scope,scope, false);
 }
 
@@ -81,22 +90,14 @@ inputLastName.addEventListener("blur", function(event) {
 }); 
 
 
-// debounce
-// strotle
-
-
-// some every
-
-
-
-
+// ******************verifmail**********************
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
 const inputLastMail = document.getElementById("email");
-inputLastMail.addEventListener("blur", function(event) {
+inputLastMail.addEventListener("input", function(event) {
   const inputValue = event.target.value;
   if (isValidEmail(inputValue)) {
     manageError("messageErremail", "email", false);
@@ -104,30 +105,22 @@ inputLastMail.addEventListener("blur", function(event) {
     manageError("messageErremail", "email", true);
   }
 });
+// *******************************verif date***************
 
-const getToday = () => {
-  const aujourdHui = new Date();
-  const annee = aujourdHui.getFullYear();
-  const mois = String(aujourdHui.getMonth() + 1).padStart(2, '0'); 
-  const jour = String(aujourdHui.getDate()).padStart(2, '0');
-  return `${annee}-${mois}-${jour}`;
-};
-  
 const inputBirthDate = document.getElementById("birthDate");
 inputBirthDate.addEventListener("blur", function(event) {
-  const inputValue = event.target.value;
-  const today = getToday(); 
+  const inputValue = new Date(event.target.value);
+  const today = new Date();
+  const age = new Date(today - inputValue).getFullYear()-1970;
 
-  const age = today.split('-')[0] - inputValue.split('-')[0];
-  
   if (age >= 18 && age <= 110) {
-    manageError("messageErrbirthDate", "birthDate", false );
+    manageError("messageErrbirthDate", "birthDate", false);
   } else {
     manageError("messageErrbirthDate", "birthDate", true);
   }
 });
-  
 
+// ********************************quantité*******************
 const inputQuantity = document.getElementById("quantity");
 inputQuantity.addEventListener("blur", function(event) {
   const inputValue = event.target.value;
@@ -138,33 +131,30 @@ inputQuantity.addEventListener("blur", function(event) {
   }
 });
 
-// /**
-//  * @returns verifi si une radio est coché
-//  */
-function isAnyRadioChecked() {
-    for (var i = 0; i < radios.length; i++) {
-        if (radios[i].checked) {
-            return true;
-        }
-    }
-    return false;
-}
-/**
- * @returns renvois l'erreur radio
- */
-function verifRadio(){
-  const allRadios = document.getElementsByName('location');
-  
-  for (var i = 0; i < radios.length; i++) {
-      allRadios[i].addEventListener('change', function() {
-          var isRadioChecked = isAnyRadioChecked();
-          if (isRadioChecked) {
-            console.log("rouge");
-            removeError("messageErrBirth", "birthDate");;
-          } else {
-            showError("messageErrBirth", "birthDate");;
-          }
-      });
-  }
+// ************************radios et conditions  *******************
 
+const optionsLocation = document.querySelectorAll('.options');
+const conditions = document.getElementById("conditions");
+console.log(optionsLocation);
+console.log(conditions);
+function checkIfChecked(inputs, scope){
+  let isChecked = false
+  inputs.forEach(input => {
+    if (input.checked) {
+      isChecked = true;
+    }
+  });
+  return manageError("messageErr" + scope, scope, !isChecked)
 }
+
+optionsLocation.forEach(input => {
+  input.addEventListener("change", function() {
+    checkIfChecked(optionsLocation, "options");
+  });
+});
+
+conditions.addEventListener("change", function() {
+    checkIfChecked([conditions], "conditions");
+  });
+
+// **********************************envoyer tous *************
