@@ -41,7 +41,6 @@ function verif(event) {
     event.preventDefault();
     confirmation.style.display = "block";
   } else {
-    event.preventDefault();
     errors.forEach((errorId) => {
       const errorElement = document.getElementById(errorId);
       const errmessage = document.getElementById("messageErr"+ errorId);
